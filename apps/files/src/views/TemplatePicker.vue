@@ -143,10 +143,19 @@ export default {
 		 * @param {object} provider the template provider picked
 		 */
 		open(name, provider) {
+
 			this.checked = this.emptyTemplate.fileid
 			this.name = name
-			this.opened = true
 			this.provider = provider
+
+			// If there is no templates available, just create an empty file
+			if (provider.templates.length === 0) {
+				this.onSubmit()
+				return
+			}
+
+			// Else, open the picker
+			this.opened = true
 		},
 
 		/**
