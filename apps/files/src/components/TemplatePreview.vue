@@ -149,7 +149,6 @@ export default {
 		align-items: center;
 		flex: 1 1;
 		flex-direction: column;
-		margin: var(--margin);
 
 		&, * {
 			cursor: pointer;

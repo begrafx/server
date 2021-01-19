@@ -55,7 +55,7 @@
 				<input type="submit"
 					class="primary"
 					:value="t('files', 'Create')"
-					:aria-label="t('files', 'Create a new file with the ')">
+					:aria-label="t('files', 'Create a new file with the selected template')">
 			</div>
 		</form>
 
@@ -234,6 +234,11 @@ export default {
 		padding: calc(var(--margin) * 2);
 		// Will be handled by the buttons
 		padding-bottom: 0;
+
+		h3 {
+			text-align: center;
+			font-weight: bold;
+		}
 	}
 
 	&__list {
@@ -242,18 +247,20 @@ export default {
 		grid-auto-columns: 1fr;
 		// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
 		max-width: calc(var(--fullwidth) * 6);
-		grid-template-columns: repeat(auto-fit, minmax(var(--fullwidth), 1fr));
+		grid-template-columns: repeat(auto-fit, var(--fullwidth));
 		// Make sure all rows are the same height
 		grid-auto-rows: 1fr;
+		// Center the columns set
+		justify-content: center;
 	}
+
 	&__buttons {
 		display: flex;
 		justify-content: space-between;
 		padding: calc(var(--margin) * 2) var(--margin);
 		position: sticky;
-		// Make sure the templates list doesn't weirdly peak under when scrolled. Happens on some rare occasions
-		bottom: -1px;
-		background-color: var(--color-main-background);
+		bottom: 0;
+		background-image: linear-gradient(0, var(--gradient-main-background));
 	}
 
 	// Make sure we're relative for the loading emptycontent on top
