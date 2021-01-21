@@ -56,7 +56,7 @@ interface ITemplateManager {
 	 * @return array
 	 * @since 21.0.0
 	 */
-	public function listCreators(): array;
+	public function listCreators():? array;
 
 	/**
 	 * @return bool

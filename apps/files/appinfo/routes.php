@@ -154,6 +154,11 @@ $application->registerRoutes(
 				'verb' => 'POST'
 			],
 			[
+				'name' => 'Template#initializeTemplateDirectory',
+				'url' => '/api/v1/templates/init',
+				'verb' => 'POST'
+			],
+			[
 				'name' => 'TransferOwnership#transfer',
 				'url' => '/api/v1/transferownership',
 				'verb' => 'POST',

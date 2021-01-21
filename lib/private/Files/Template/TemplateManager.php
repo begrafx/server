@@ -103,7 +103,7 @@ class TemplateManager implements ITemplateManager {
 		return $this->providers;
 	}
 
-	public function listCreators(): array {
+	public function listCreators():? array {
 		return array_map(function (TemplateFileCreator $entry) {
 			return array_merge($entry->jsonSerialize(), [
 				'templates' => $this->getTemplateFiles($entry)

@@ -29,7 +29,7 @@
 		<form class="templates-picker__form"
 			:style="style"
 			@submit.prevent.stop="onSubmit">
-			<h3>{{ t('files', 'Pick a template') }}</h3>
+			<h2>{{ t('files', 'Pick a template') }}</h2>
 
 			<!-- Templates list -->
 			<ul class="templates-picker__list">
@@ -68,6 +68,7 @@
 <script>
 import { generateOcsUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import { getCurrentDirectory } from '../utils/davUtils'
 
 import axios from '@nextcloud/axios'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
@@ -179,7 +180,7 @@ export default {
 
 		async onSubmit() {
 			this.loading = true
-			const currentDirectory = this.getCurrentDirectory()
+			const currentDirectory = getCurrentDirectory()
 			const fileList = OCA?.Files?.App?.currentFileList
 
 			try {
@@ -212,18 +213,6 @@ export default {
 				this.loading = false
 			}
 		},
-
-		/**
-		 * Return the current directory, fallback to root
-		 * @returns {string}
-		 */
-		getCurrentDirectory() {
-			const currentDirInfo = OCA?.Files?.App?.currentFileList?.dirInfo
-				|| { path: '/', name: '' }
-
-			// Make sure we don't have double slashes
-			return `${currentDirInfo.path}/${currentDirInfo.name}`.replace(/\/\//gi, '/')
-		},
 	},
 }
 </script>
@@ -235,9 +224,10 @@ export default {
 		// Will be handled by the buttons
 		padding-bottom: 0;
 
-		h3 {
+		h2 {
 			text-align: center;
 			font-weight: bold;
+			margin: var(--margin) 0 calc(var(--margin) * 2);
 		}
 	}
 
