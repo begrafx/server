@@ -30,6 +30,7 @@ import Vue from 'vue'
 
 import TemplatePickerView from './views/TemplatePicker'
 import { getCurrentUser } from '@nextcloud/auth'
+import { showError } from '@nextcloud/dialogs'
 
 // Set up logger
 const logger = getLoggerBuilder()
@@ -54,7 +55,7 @@ document.body.appendChild(TemplatePickerRoot)
 const templates = loadState('files', 'templates', [])
 const templatesPath = loadState('files', 'templates_path', false)
 logger.debug('Templates providers', templates)
-logger.debug('Templates folder', templatesPath)
+logger.debug('Templates folder', { templatesPath })
 
 // Init vue app
 const View = Vue.extend(TemplatePickerView)
@@ -122,12 +123,18 @@ templates.forEach((provider, index) => {
  * @param {string} name the templates folder name
  */
 const initTemplatesFolder = async function(name) {
+	const templatePath = (getCurrentDirectory() + `/${name}`).replace('//', '/')
 	try {
-		await axios.post(generateOcsUrl('apps/files/api/v1/templates', 2) + 'init', {
-			path: getCurrentDirectory(),
-			userId: getCurrentUser().uid,
+		logger.debug('Initializing the templates directory', { templatePath })
+		await axios.post(generateOcsUrl('apps/files/api/v1/templates', 2) + 'path', {
+			templatePath,
+			copySystemTemplates: true,
 		})
+
+		// Go to template directory
+		OCA.Files.App.currentFileList.changeDirectory(templatePath, true, true)
 	} catch (error) {
-		logger.error('Unable to initialize templates directory')
+		logger.error('Unable to initialize the templates directory')
+		showError(t('files', 'Unable to initialize the templates directory'))
 	}
 }

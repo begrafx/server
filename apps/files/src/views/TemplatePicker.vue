@@ -29,7 +29,7 @@
 		<form class="templates-picker__form"
 			:style="style"
 			@submit.prevent.stop="onSubmit">
-			<h2>{{ t('files', 'Pick a template') }}</h2>
+			<h2>{{ t('files', 'Pick a template for {name}', { name: nameWithoutExt }) }}</h2>
 
 			<!-- Templates list -->
 			<ul class="templates-picker__list">
@@ -59,7 +59,7 @@
 			</div>
 		</form>
 
-		<EmptyContent class="templates-picker__loading" v-if="loading" icon="icon-loading">
+		<EmptyContent v-if="loading" class="templates-picker__loading" icon="icon-loading">
 			{{ t('files', 'Creating file') }}
 		</EmptyContent>
 	</Modal>
@@ -68,12 +68,13 @@
 <script>
 import { generateOcsUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
-import { getCurrentDirectory } from '../utils/davUtils'
-
 import axios from '@nextcloud/axios'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import path from 'path'
 
+import { getCurrentDirectory } from '../utils/davUtils'
+import { getTemplates } from '../services/Templates'
 import TemplatePreview from '../components/TemplatePreview'
 
 const border = 2
@@ -108,6 +109,14 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * Strip away extension from name
+		 * @returns {string}
+		 */
+		nameWithoutExt() {
+			return path.parse(this.name).name
+		},
+
 		emptyTemplate() {
 			return {
 				basename: t('files', 'Blank'),
@@ -132,7 +141,7 @@ export default {
 				'--width': width + 'px',
 				'--border': border + 'px',
 				'--fullwidth': width + 2 * margin + 2 * border + 'px',
-				'--height': this.ratio ? width * this.ratio + 'px' : null,
+				'--height': this.provider.ratio ? Math.round(width / this.provider.ratio) + 'px' : null,
 			}
 		},
 	},
@@ -157,6 +166,8 @@ export default {
 
 			// Else, open the picker
 			this.opened = true
+
+			getTemplates()
 		},
 
 		/**
@@ -207,7 +218,8 @@ export default {
 
 				this.close()
 			} catch (error) {
-				this.logger.error('Error while creating the new file from template', error)
+				this.logger.error('Error while creating the new file from template')
+				console.error(error)
 				showError(this.t('files', 'Unable to create new file from template'))
 			} finally {
 				this.loading = false
